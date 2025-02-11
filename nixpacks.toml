@@ -1,11 +1,11 @@
 [phases.setup]
-nixPkgs = ["bun"]  # Esto asegura que Bun esté disponible
+nixPkgs = ["bun"]
 
 [phases.install]
-cmds = ["bun install"]  # Instala las dependencias usando Bun
+cmds = ["bun install"]
 
 [phases.build]
-cmds = ["bun run build"]  # Construye la aplicación para producción
+cmds = []  # Fase de build vacía, no hace nada
 
 [start]
-cmd = "bun start"  # Comando para iniciar la aplicación
+cmd = "bun start"
