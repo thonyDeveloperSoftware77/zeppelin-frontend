@@ -38,5 +38,9 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
+  },
+  "devDependencies": {
+    "jest-worker": "27.5.1",
+    "terser-webpack-plugin": "5.1.4"
   }
 }
