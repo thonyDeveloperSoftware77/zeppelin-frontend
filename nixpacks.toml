@@ -5,7 +5,7 @@ nixPkgs = ["bun"]
 cmds = ["bun install"]
 
 [phases.build]
-cmds = []  # Fase de build vacía, no hace nada
+cmds = ["bun run build"]
 
 [start]
 cmd = "bun start"
