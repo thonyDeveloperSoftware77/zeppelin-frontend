@@ -1,7 +1,7 @@
 FROM oven/bun:1.1.20-alpine
 
 WORKDIR /app
-
+#copia todos
 COPY . .
 
 RUN if [ ! -d "node_modules" ]; then bun install; fi
