@@ -3,15 +3,18 @@ name: Build and Deploy
 on:
   push:
     branches:
-      - main 
+      - main
 
 jobs:
   deploy:
-    runs-on: self-hosted 
+    runs-on: self-hosted
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
+
+      - name: Añadir Bun al PATH
+        run: echo "/root/.bun/bin" >> $GITHUB_PATH
 
       - name: Install dependencies with Bun
         run: bun install
