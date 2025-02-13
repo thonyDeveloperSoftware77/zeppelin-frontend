@@ -10,12 +10,14 @@ jobs:
     runs-on: self-hosted
 
     steps:
-      - name: Check Runner Info
+      - name: Verificar runner activo
         run: |
-          echo "Running on $(hostname)"
-          echo "User: $(whoami)"
-          echo "Current PATH: $PATH"
-          which bun || echo "❌ Bun no está en el PATH"
+          echo "🏠 Runner en uso: $(hostname)"
+          echo "👤 Usuario actual: $(whoami)"
+          echo "🛤️ PATH actual: $PATH"
+          echo "🔍 Bun se encuentra en: $(which bun || echo 'No encontrado')"
+        shell: bash
+
 
       # 1️⃣ Checkout del código
       - name: Checkout repository
