@@ -10,25 +10,49 @@ jobs:
     runs-on: self-hosted
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
+      # 1️⃣ Clonar o actualizar el repositorio en el VPS
+      - name: Clonar o actualizar el código en el VPS
+        run: |
+          if [ ! -d "/home/deploy/zeppelin-frontend" ]; then
+            git clone https://github.com/${{ github.repository }}.git /home/deploy/zeppelin-frontend
+          else
+            cd /home/deploy/zeppelin-frontend
+            git pull origin main
+          fi
 
+      # 2️⃣ Cambiar al directorio del proyecto
+      - name: Moverse al directorio del proyecto
+        run: cd /home/deploy/zeppelin-frontend
+
+      # 3️⃣ Añadir Bun al PATH
       - name: Añadir Bun al PATH
         run: echo "/root/.bun/bin" >> $GITHUB_PATH
 
+      # 4️⃣ Instalar dependencias con Bun
       - name: Install dependencies with Bun
-        run: bun install
+        run: |
+          cd /home/deploy/zeppelin-frontend
+          bun install
 
+      # 5️⃣ Construir el proyecto
       - name: Build project
-        run: bun run build
+        run: |
+          cd /home/deploy/zeppelin-frontend
+          bun run build
 
+      # 6️⃣ Construir la imagen Docker en el VPS
       - name: Build Docker image
-        run: docker build -t zeppelin-frontend:latest .
+        run: |
+          cd /home/deploy/zeppelin-frontend
+          docker build -t zeppelin-frontend:latest .
 
+      # 7️⃣ Detener y eliminar el contenedor anterior
       - name: Stop and remove previous container
         run: |
           docker stop zeppelin-frontend || true
           docker rm zeppelin-frontend || true
 
+      # 8️⃣ Correr el nuevo contenedor
       - name: Run Docker container
-        run: docker run -d --name zeppelin-frontend -p 3002:3002 zeppelin-frontend:latest
+        run: |
+          docker run -d --name zeppelin-frontend -p 3002:3002 zeppelin-frontend:latest
