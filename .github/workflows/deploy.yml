@@ -10,49 +10,41 @@ jobs:
     runs-on: self-hosted
 
     steps:
-      # 1️⃣ Clonar o actualizar el repositorio en el VPS
-      - name: Clonar o actualizar el código en el VPS
+      # 1️⃣ Clonar o actualizar el código en el directorio correcto
+      - name: Clonar o actualizar el código
         run: |
-          if [ ! -d "/home/deploy/zeppelin-frontend" ]; then
-            git clone https://github.com/${{ github.repository }}.git /home/deploy/zeppelin-frontend
+          if [ ! -d "/home/runner/zeppelin/gh-runners/frontend-runner/zeppelin-frontend" ]; then
+            git clone https://github.com/${{ github.repository }}.git /home/runner/zeppelin/gh-runners/frontend-runner/zeppelin-frontend
           else
-            cd /home/deploy/zeppelin-frontend
+            cd /home/runner/zeppelin/gh-runners/frontend-runner/zeppelin-frontend
             git pull origin main
           fi
 
-      # 2️⃣ Cambiar al directorio del proyecto
-      - name: Moverse al directorio del proyecto
-        run: cd /home/deploy/zeppelin-frontend
-
-      # 3️⃣ Añadir Bun al PATH
-      - name: Añadir Bun al PATH
-        run: echo "/root/.bun/bin" >> $GITHUB_PATH
-
-      # 4️⃣ Instalar dependencias con Bun
+      # 2️⃣ Instalar dependencias con Bun
       - name: Install dependencies with Bun
         run: |
-          cd /home/deploy/zeppelin-frontend
+          cd /home/runner/zeppelin/gh-runners/frontend-runner/zeppelin-frontend
           bun install
 
-      # 5️⃣ Construir el proyecto
+      # 3️⃣ Construir el proyecto
       - name: Build project
         run: |
-          cd /home/deploy/zeppelin-frontend
+          cd /home/runner/zeppelin/gh-runners/frontend-runner/zeppelin-frontend
           bun run build
 
-      # 6️⃣ Construir la imagen Docker en el VPS
+      # 4️⃣ Construir la imagen Docker (sin root)
       - name: Build Docker image
         run: |
-          cd /home/deploy/zeppelin-frontend
+          cd /home/runner/zeppelin/gh-runners/frontend-runner/zeppelin-frontend
           docker build -t zeppelin-frontend:latest .
 
-      # 7️⃣ Detener y eliminar el contenedor anterior
+      # 5️⃣ Detener y eliminar el contenedor anterior (sin root)
       - name: Stop and remove previous container
         run: |
           docker stop zeppelin-frontend || true
           docker rm zeppelin-frontend || true
 
-      # 8️⃣ Correr el nuevo contenedor
+      # 6️⃣ Correr el nuevo contenedor (sin root)
       - name: Run Docker container
         run: |
           docker run -d --name zeppelin-frontend -p 3002:3002 zeppelin-frontend:latest
