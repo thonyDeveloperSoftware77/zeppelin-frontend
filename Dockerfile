@@ -6,6 +6,7 @@ WORKDIR /app
 
 # Copia los archivos necesarios
 COPY package.json bun.lock ./
+COPY static-server.js ./
 
 # Instala solo dependencias de producción (más ligero)
 RUN bun install --production
