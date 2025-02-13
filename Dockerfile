@@ -5,20 +5,19 @@ FROM oven/bun:1.1.20-alpine
 WORKDIR /app
 
 # Copia los archivos necesarios
-COPY package.json .
-COPY bun.lock .
+COPY package.json bun.lock ./
 
-# Instala las dependencias de producción
+# Instala solo dependencias de producción (más ligero)
 RUN bun install --production
 
-# Copia el build generado localmente
-COPY build/ ./build/
+# Copia todo el código fuente
+COPY . .
 
-# Instala un servidor estático (serve)
-RUN bun add -g serve
+# Ejecutar el build dentro del contenedor
+RUN bun run build
 
 # Expone el puerto 3002
 EXPOSE 3002
 
-# Comando para servir la aplicación
-CMD ["serve", "-s", "build", "-l", "3002"]
+# Usa Bun para servir archivos estáticos sin `serve`
+CMD ["bun", "run", "--allow-net", "static-server.js"]
