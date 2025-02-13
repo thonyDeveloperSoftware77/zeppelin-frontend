@@ -10,6 +10,13 @@ jobs:
     runs-on: self-hosted
 
     steps:
+      - name: Check Runner Info
+        run: |
+          echo "Running on $(hostname)"
+          echo "User: $(whoami)"
+          echo "Current PATH: $PATH"
+          which bun || echo "❌ Bun no está en el PATH"
+
       # 1️⃣ Checkout del código
       - name: Checkout repository
         uses: actions/checkout@v3
