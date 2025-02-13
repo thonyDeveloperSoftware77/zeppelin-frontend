@@ -10,11 +10,8 @@ COPY package.json bun.lock ./
 # Instala solo dependencias de producción (más ligero)
 RUN bun install --production
 
-# Copia todo el código fuente
-COPY . .
-
-# Ejecutar el build dentro del contenedor
-RUN bun run build
+# Copia la carpeta de build generada previamente en GitHub Actions
+COPY build/ ./build/
 
 # Expone el puerto 3002
 EXPOSE 3002
