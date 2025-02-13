@@ -1,4 +1,4 @@
-name: Build and Deploy
+name: Build and Deploy via Coolify
 
 on:
   push:
@@ -6,45 +6,53 @@ on:
       - main
 
 jobs:
-  deploy:
+  build:
     runs-on: self-hosted
 
     steps:
-      # 1️⃣ Clonar o actualizar el código en el directorio correcto
-      - name: Clonar o actualizar el código
-        run: |
-          if [ ! -d "/home/runner/zeppelin/gh-runners/frontend-runner/zeppelin-frontend" ]; then
-            git clone https://github.com/${{ github.repository }}.git /home/runner/zeppelin/gh-runners/frontend-runner/zeppelin-frontend
-          else
-            cd /home/runner/zeppelin/gh-runners/frontend-runner/zeppelin-frontend
-            git pull origin main
-          fi
+      # 1️⃣ Checkout del código
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
       # 2️⃣ Instalar dependencias con Bun
       - name: Install dependencies with Bun
         run: |
-          cd /home/runner/zeppelin/gh-runners/frontend-runner/zeppelin-frontend
           bun install
 
       # 3️⃣ Construir el proyecto
       - name: Build project
         run: |
-          cd /home/runner/zeppelin/gh-runners/frontend-runner/zeppelin-frontend
           bun run build
 
-      # 4️⃣ Construir la imagen Docker (sin root)
-      - name: Build Docker image
-        run: |
-          cd /home/runner/zeppelin/gh-runners/frontend-runner/zeppelin-frontend
-          docker build -t zeppelin-frontend:latest .
+      # 4️⃣ Configurar Docker Buildx
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
 
-      # 5️⃣ Detener y eliminar el contenedor anterior (sin root)
-      - name: Stop and remove previous container
-        run: |
-          docker stop zeppelin-frontend || true
-          docker rm zeppelin-frontend || true
+      # 5️⃣ Log in en GitHub Container Registry (GHCR)
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GHCR_TOKEN }}
 
-      # 6️⃣ Correr el nuevo contenedor (sin root)
-      - name: Run Docker container
+      # 6️⃣ Construir y empujar la imagen a GHCR con el tag correcto
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          file: Dockerfile
+          push: true
+          tags: |
+            ghcr.io/jaimendo99/zeppelin-frontend:latest
+            ghcr.io/jaimendo99/zeppelin-frontend:${{ github.sha }}
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: [build]  # ⚠️ Asegúrate de que el job de build se llama "build"
+    steps:
+      # 7️⃣ Notificar a Coolify para que haga el despliegue
+      - name: Notify deployment via Coolify
         run: |
-          docker run -d --name zeppelin-frontend -p 3002:3002 zeppelin-frontend:latest
+          curl -X GET "http://62.146.226.103:8000/api/v1/deploy?uuid=${{ secrets.RESOURCE_UUID }}&force=false" \
+          -H "Authorization: Bearer ${{ secrets.COOLIFY_TOKEN }}"
