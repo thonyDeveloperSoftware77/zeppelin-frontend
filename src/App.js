@@ -1,6 +1,7 @@
 import logo from './logo.svg';
 import './App.css';
 import { Button } from '@heroui/react';
+import { SignedIn, SignedOut, SignInButton, UserButton } from '@clerk/clerk-react';
 
 function App() {
   return (
@@ -10,6 +11,12 @@ function App() {
         <p>
           Edit <code>src/App.js</code> and save to reload.
         </p>
+        <SignedOut>
+          <SignInButton />
+        </SignedOut>
+        <SignedIn>
+          <UserButton />
+        </SignedIn>
         <a
           className="App-link"
           href="https://reactjs.org"
