@@ -1,0 +1,19 @@
+.sidebar {
+    width: 18%;
+    min-width: 240px;
+    height: 100vh;
+    transition: width 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    background: linear-gradient(to right, #f7f7f7, rgba(220, 220, 220, 0)); 
+    box-shadow: 5px 0px 10px rgba(0, 0, 0, 0.116);
+}
+
+  
+  .selected-option {
+    background-color: #f3f4f6; /* Color claro para el seleccionado */
+    color: #111827; /* Color de texto más oscuro */
+    font-weight: bold;
+    border-radius: 10px; /* Hace el fondo redondo */
+  }
+  
