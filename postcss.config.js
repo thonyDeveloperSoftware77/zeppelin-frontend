@@ -1,6 +1,6 @@
 module.exports = {
-    plugins: {
-      '@tailwindcss/postcss': {},  // Cambia esto
-      autoprefixer: {},
-    }
-  }
+  plugins: {
+    tailwindcss: {},  // Aquí estaba el error, debe ser "tailwindcss"
+    autoprefixer: {},
+  },
+};
