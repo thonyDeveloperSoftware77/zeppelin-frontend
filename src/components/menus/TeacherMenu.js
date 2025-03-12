@@ -1,15 +1,8 @@
-import { Link } from "react-router-dom";
-
-const TeacherMenu = () => {
-  return (
-    <nav>
-      <ul>
-        <li><Link to="/teacher/dashboard">📚 Dashboard</Link></li>
-        <li><Link to="/teacher/classes">🏫 Clases</Link></li>
-        <li><Link to="/teacher/students">🎓 Estudiantes</Link></li>
-      </ul>
-    </nav>
-  );
-};
-
-export default TeacherMenu;
+const teacherMenu = [
+    { path: "/teacher/dashboard", name: "Dashboard" },
+    { path: "/teacher/course", name: "Cursos" },
+    { path: "/teacher/content", name: "Contenido-" },
+  ];
+  
+  export default teacherMenu;
+  

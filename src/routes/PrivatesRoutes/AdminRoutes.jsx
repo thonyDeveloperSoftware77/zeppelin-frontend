@@ -4,6 +4,7 @@ import DashboardAdmin from "../../pages/Admin/DashboardAdmin";
 import Layout from "../../components/Layout";
 import adminMenu from "../../components/menus/adminMenu";
 import TeacherAdmin from "../../pages/Admin/TeacherAdmin";
+import StudentAdmin from "../../pages/Admin/StudentAdmin";
 
 const AdminRoutes = () => {
     return (
@@ -13,6 +14,7 @@ const AdminRoutes = () => {
                 <Route index element={<TeacherAdmin />} />
                 <Route path="admin/dashboard" element={<DashboardAdmin />} />
                 <Route path="admin/teachers" element={<TeacherAdmin />} />
+                <Route path="admin/students" element={<StudentAdmin />} />
             </Route>
         </Routes>
     );
