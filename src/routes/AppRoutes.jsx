@@ -11,7 +11,7 @@ const AppRoutes = () => {
 
   // 🔥 Separar la lógica de autenticación y permitir que /sign-in se renderice
   if (!isSignedIn) {
-    console.log("Redirigiendo a Sign-In");
+   console.log("Redirigiendo a Sign-In");
     return (
       <Routes>
         <Route path="/sign-in" element={<SignInPage />} />

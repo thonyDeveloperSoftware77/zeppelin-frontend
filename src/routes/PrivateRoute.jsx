@@ -17,8 +17,8 @@ const PrivateRoute = () => {
 
   const role = user?.publicMetadata?.role;
 
-  console.log("Usuario autenticado con rol:", role);
-  console.log("Intentando acceder a:", location.pathname);
+ console.log("Usuario autenticado con rol:", role);
+ console.log("Intentando acceder a:", location.pathname);
 
   if (!role) {
     return <div>No tienes un rol asignado. Contacta con el administrador.</div>;
@@ -34,7 +34,7 @@ const PrivateRoute = () => {
   // Verificar si la ruta actual es válida para el rol del usuario
   const allowedRoute = roleRoutes[role];
   if (!location.pathname.startsWith(allowedRoute)) {
-    console.log("Acceso denegado. Redirigiendo...");
+   console.log("Acceso denegado. Redirigiendo...");
     return <Navigate to={allowedRoute + "/dashboard"} replace />;
   }
 

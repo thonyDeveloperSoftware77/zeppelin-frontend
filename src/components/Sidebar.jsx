@@ -1,10 +1,12 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import "./Sidebar.css";
-import { UserButton } from "@clerk/clerk-react";
+import { UserButton, useUser } from "@clerk/clerk-react";
+import { assets } from "../assets/img/assets";
 
 const Sidebar = ({ routes }) => {
   const [isOpen, setIsOpen] = useState(true);
+  const { user } = useUser();
   const [openSubMenus, setOpenSubMenus] = useState({});
   const location = useLocation(); // Obtiene la ruta actual
 
@@ -23,14 +25,15 @@ const Sidebar = ({ routes }) => {
     <div className="sidebar">
       <aside className={`${isOpen ? "translate-x-0" : "-translate-x-full px-4"}`}>
         {/* Sidebar header */}
-        <div className="p-4 border-b border-gray-700">
-          <h2 className="text-xl font-bold">Dashboard</h2>
+        <div className="p-4 ">
+          <img width={160} src={assets.logoLight2} alt="" />
         </div>
+
         <div className="flex gap-4 p-4">
           <UserButton />
           <div className="flex flex-col">
-            <p className="text-md">HeroUI</p>
-            <p className="text-small text-default-500">heroui.com</p>
+            <p className="text-md"> {user?.fullName || "Usuario"}</p>
+            <p className="text-small text-default-700"> {user?.primaryEmailAddress?.emailAddress || "Sin correo"}</p>
           </div>
         </div>
 
@@ -57,10 +60,10 @@ const Sidebar = ({ routes }) => {
                             <li key={subIndex}>
                               <Link
                                 to={subItem.path}
-                                className={`flex items-center gap-2 p-2 rounded-full transition-colors ${
+                                className={`flex items-center gap-2 p-2 rounded-md transition-colors ${
                                   location.pathname === subItem.path
                                     ? "selected-option"
-                                    : "hover:bg-gray-700 hover:text-white"
+                                    : "hover:bg-gray-500 hover:text-white"
                                 }`}
                               >
                                 {subItem.icon && <span>{subItem.icon}</span>}
@@ -74,10 +77,10 @@ const Sidebar = ({ routes }) => {
                   ) : (
                     <Link
                       to={route.path}
-                      className={`flex items-center gap-2 p-2 rounded-full transition-colors ${
+                      className={`flex items-center gap-2 p-2 rounded-md transition-colors ${
                         location.pathname === route.path
                           ? "selected-option"
-                          : "hover:bg-gray-700 hover:text-white"
+                          : "hover:bg-gray-500 hover:text-white"
                       }`}
                     >
                       {route.icon && <span>{route.icon}</span>}

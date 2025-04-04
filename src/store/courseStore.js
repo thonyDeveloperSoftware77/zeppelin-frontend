@@ -18,8 +18,8 @@ const useCourseStore = create((set) => ({
   addCourse: async (dataService, courseData) => {
     set({ loading: true });
     try {
-      await dataService.post("/course", courseData); // No devuelve un objeto, solo un mensaje
-      await set((state) => state.fetchCourses(dataService)); // 🔄 Ejecuta `fetchCourses` para actualizar la lista
+      await dataService.post("/course", courseData);
+      await set((state) => state.fetchCourses(dataService))
     } catch (error) {
       set({ error: error.message, loading: false });
     }

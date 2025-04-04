@@ -19,7 +19,7 @@ const CourseAddForm = ({ onSuccess }) => {
   const { addCourse, error } = useCourses();
 
   const onSubmit = async (data) => {
-    console.log(data);
+   console.log(data);
     
     await addCourse(data);
 

@@ -8,7 +8,7 @@ const TeacherAddForm = ({ onSuccess }) => {
   const { register, handleSubmit, reset, formState: { errors } } = useForm();
   const { addTeacher, error } = useTeachers();
   const onSubmit = async (data) => {
-    console.log(data)
+   console.log(data)
     await addTeacher(data);
     if (onSuccess) {
       onSuccess();
@@ -20,7 +20,7 @@ const TeacherAddForm = ({ onSuccess }) => {
       description: error,
       color: "danger"
     })
-    console.log(error)
+   console.log(error)
   };
 
   return (

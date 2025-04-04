@@ -1,40 +1,81 @@
-import { create } from "zustand";
+import { useForm } from "react-hook-form";
+import { Input, Button, useDisclosure, ModalFooter, ModalHeader, ModalBody, ModalContent, Modal, addToast, ToastProvider } from "@heroui/react";
+import useTeachers from "../../../hooks/useTeachers";
+import { BiSolidAddToQueue } from "react-icons/bi";
+import useStudents from "../../../hooks/useStudents";
 
-const useStudentStore = create((set) => ({
-  students: [],
-  loading: false,
-  error: null,
-
-  fetchStudents: async (dataService) => {
-    set({ loading: true });
-    try {
-      const students = await dataService.get("/students");
-      set({ students, loading: false });
-    } catch (error) {
-      set({ error: error.message, loading: false });
+const StudentAddForm = ({ onSuccess }) => {
+  const { isOpen, onOpen, onOpenChange } = useDisclosure();
+  const { register, handleSubmit, reset, formState: { errors } } = useForm();
+  const { addStudent, error } = useStudents();
+  const onSubmit = async (data) => {
+    console.log(data)
+    await addStudent(data);
+    if (onSuccess) {
+      onSuccess();
+      reset();
     }
-  },
 
-  addStudent: async (dataService, studentData) => {
-    set({ loading: true });
-    try {
-      const newStudent = await dataService.post("/student/register", studentData);
-      set((state) => ({ students: [...state.students, newStudent], loading: false }));
-    } catch (error) {
-      set({ error: error.message, loading: false });
-    }
-  },
+    addToast({
+      title: "Profesor no Registrado",
+      description: error,
+      color: "danger"
+    })
+    console.log(error)
+  };
 
-  removeStudent: async (dataService, studentId) => {
-    try {
-      await dataService.delete(`/students/${studentId}`);
-      set((state) => ({
-        students: state.students.filter((s) => s.id !== studentId),
-      }));
-    } catch (error) {
-      set({ error: error.message });
-    }
-  },
-}));
+  return (
+    <>
+      <div className="flex justify-between items-center w-full">
+        <h1 className="text-lg font-bold">Estudiantes</h1>
+        <Button className="max-w-fit" color="default" onPress={onOpen}>
+          Añadir Nuevo <BiSolidAddToQueue size={35} />
+        </Button>
+      </div>
 
-export default useStudentStore;
+
+      <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
+        <ModalContent>
+          {(onClose) => (
+            <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
+
+              <ModalHeader className="flex flex-col gap-1">Registro de Estudiantes</ModalHeader>
+              <ModalBody>
+                <Input
+                  label="Nombre"
+                  {...register("name", { required: "El nombre es obligatorio" })}
+                  isInvalid={!!errors.name}
+                  errorMessage={errors.name?.message}
+                />
+                <Input
+                  label="Apellido"
+                  {...register("lastname", { required: "El apellido es obligatorio" })}
+                  isInvalid={!!errors.lastname}
+                  errorMessage={errors.lastname?.message}
+                />
+                <Input
+                  label="Correo"
+                  type="email"
+                  {...register("email", { required: "El correo es obligatorio" })}
+                  isInvalid={!!errors.email}
+                  errorMessage={errors.email?.message}
+                />
+              </ModalBody>
+              <ModalFooter>
+                <Button color="danger" variant="light" onPress={onClose}>
+                  Cerrar
+                </Button>
+                <Button color="primary" type="submit" >
+                  Registrar
+                </Button>
+              </ModalFooter>
+            </form>
+          )}
+        </ModalContent>
+      </Modal>
+    </>
+
+  );
+};
+
+export default StudentAddForm;

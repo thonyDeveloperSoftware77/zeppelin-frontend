@@ -14,7 +14,7 @@ const columns = [
 
 const TeacherView = () => {
     const { teachers} = useTeachers();
-    console.log(teachers)
+   console.log(teachers)
     const [sortDescriptor, setSortDescriptor] = useState({
         column: "age",
         direction: "ascending",
@@ -59,7 +59,7 @@ const TeacherView = () => {
             <Pagination
                 page={1}
                 total={Math.ceil(teachers.length / 5)}
-                onChange={(page) => console.log(page)}
+                onChange={(page) =>console.log(page)}
             />
         </div>
     );

@@ -9,7 +9,6 @@ import StudentAdmin from "../../pages/Admin/StudentAdmin";
 const AdminRoutes = () => {
     return (
         <Routes>
-            {/* Definir Layout como una ruta con Outlet */}
             <Route path="/" element={<Layout routes={adminMenu} />}>
                 <Route index element={<TeacherAdmin />} />
                 <Route path="admin/dashboard" element={<DashboardAdmin />} />

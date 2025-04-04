@@ -12,7 +12,7 @@ const columns = [
 
 const StudentView = () => {
     const { students } = useStudents();
-    console.log(students);
+   console.log(students);
 
     const [sortDescriptor, setSortDescriptor] = useState({
         column: "age",
@@ -57,7 +57,7 @@ const StudentView = () => {
             <Pagination
                 page={1}
                 total={Math.ceil(students.length / 5)}
-                onChange={(page) => console.log(page)}
+                onChange={(page) =>console.log(page)}
             />
         </div>
     );

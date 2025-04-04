@@ -1,27 +1,30 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import { cn } from "@heroui/react";
 import { BiLeftArrowAlt } from "react-icons/bi";
 
 const PageHeader = ({
   title,
   subtitle,
-  icon: Icon, // Recibe un ícono como prop
-  actions, // Puedes pasar botones u otros elementos aquí
+  icon: Icon,
+  actions,
   className = "",
-  onBack, // Función para botón "Volver"
+  onBack = false,
 }) => {
+  const navigate = useNavigate();
+
   return (
-    <div className={cn("bg-white shadow-md p-4 rounded-lg flex items-center justify-between", className)}>
+    <div className={cn("m-4 bg-white shadow-md p-4 rounded-lg flex items-center justify-between", className)}>
       <div className="flex items-center gap-3">
         {onBack && (
           <button
-            onClick={onBack}
+            onClick={() => navigate(-1)}
             className="p-2 rounded-lg bg-gray-100 hover:bg-gray-200 transition"
           >
-            <BiLeftArrowAlt className="h-6 w-6 text-gray-600" />
+            <BiLeftArrowAlt size={12}/>
           </button>
         )}
-        {Icon && <Icon className="h-8 w-8 text-blue-600" />} {/* Ícono dinámico */}
+        {Icon && <Icon className="h-8 w-8 text-blue-600" />}
         <div>
           <h1 className="text-xl font-semibold text-gray-900">{title}</h1>
           {subtitle && <p className="text-sm text-gray-500">{subtitle}</p>}

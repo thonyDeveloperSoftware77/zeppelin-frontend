@@ -3,6 +3,7 @@ import ReactDOM from "react-dom/client";
 import "./index.css";
 import { HeroUIProvider, ToastProvider } from "@heroui/react";
 import App from "./App.jsx";
+import 'remirror/styles/all.css';
 import ClerkProviderWrapper from "./context/ClerkProviderWrapper.jsx";
 
 const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
@@ -12,13 +13,12 @@ if (!PUBLISHABLE_KEY) {
 }
 
 ReactDOM.createRoot(document.getElementById("root")).render(
-  <React.StrictMode>
+  <>
     <ToastProvider placement="top-right" />
     <ClerkProviderWrapper publishableKey={PUBLISHABLE_KEY}>
       <HeroUIProvider>
         <App />
       </HeroUIProvider>
     </ClerkProviderWrapper>
-  </React.StrictMode>
-
+  </>
 );
