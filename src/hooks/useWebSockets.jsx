@@ -1,28 +1,41 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useAuth } from "@clerk/clerk-react";
 
-const useWebSocket = (onMessage) => {
+const useWebSocket = () => {
   const { getToken } = useAuth();
   const socketRef = useRef(null);
+  const userIdRef = useRef(null);
+  const [ready, setReady] = useState(false);
+
+  const [lastMessage, setLastMessage] = useState(null);
 
   useEffect(() => {
     const connect = async () => {
       const token = await getToken();
-      const userId = JSON.parse(atob(token.split('.')[1])).sub;
+      const decoded = JSON.parse(atob(token.split(".")[1]));
+      const userId = decoded.sub;
+      userIdRef.current = userId;
 
-      const ws = new WebSocket(`${import.meta.env.VITE_WS_URL}/ws?user_id=${userId}&token=${token}`);
+      const platform = "web";
+
+      const ws = new WebSocket(
+        `${import.meta.env.VITE_WS_URL}/ws?user_id=${userId}&token=${token}&platform=${platform}`
+      );
+
       socketRef.current = ws;
 
       ws.onopen = () => {
         console.log("✅ WebSocket conectado");
+        setReady(true);
       };
 
       ws.onmessage = (event) => {
-        if (onMessage) onMessage(event.data);
+        setLastMessage(event.data);
       };
 
       ws.onclose = () => {
         console.log("❌ WebSocket cerrado");
+        setReady(false);
       };
 
       ws.onerror = (err) => {
@@ -33,7 +46,9 @@ const useWebSocket = (onMessage) => {
     connect();
 
     return () => {
-      socketRef.current?.close();
+      if (socketRef.current) {
+        socketRef.current.close();
+      }
     };
   }, [getToken]);
 
@@ -45,6 +60,9 @@ const useWebSocket = (onMessage) => {
 
   return {
     sendMessage,
+    userId: userIdRef.current,
+    lastMessage,
+    ready,
   };
 };
 
