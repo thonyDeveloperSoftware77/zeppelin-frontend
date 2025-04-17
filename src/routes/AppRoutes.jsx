@@ -9,7 +9,6 @@ const AppRoutes = () => {
 
   if (!isLoaded || !isUserLoaded) return <div>Cargando App...</div>;
 
-  // 🔥 Separar la lógica de autenticación y permitir que /sign-in se renderice
   if (!isSignedIn) {
    console.log("Redirigiendo a Sign-In");
     return (
@@ -20,7 +19,6 @@ const AppRoutes = () => {
     );
   }
 
-  // 🔹 Verificar si el usuario tiene rol
   const role = user?.publicMetadata?.role;
   if (!role) {
     return <div>No tienes un rol asignado. Contacta con el administrador.</div>;

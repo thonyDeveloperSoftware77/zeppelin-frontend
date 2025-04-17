@@ -1,93 +1,76 @@
-import 'remirror/styles/all.css';
-
-import React, { useCallback, useState } from 'react';
-import { Remirror, ThemeProvider, useRemirror, useCommands } from '@remirror/react';
+import "remirror/styles/all.css";
+import React, { useCallback, useState } from "react";
+import {
+  Remirror,
+  ThemeProvider,
+  useRemirror,
+} from "@remirror/react";
 import {
   BoldExtension,
   ItalicExtension,
   UnderlineExtension,
   HeadingExtension,
   TableExtension,
-  ImageExtension,
   PlaceholderExtension,
   IframeExtension,
-} from 'remirror/extensions';
-import { FontSizeExtension } from '@remirror/extension-font-size';
+  BulletListExtension,
+  ListItemExtension,
+  OrderedListExtension,
+  TaskListExtension,
+} from "remirror/extensions";
+import { FontSizeExtension } from "@remirror/extension-font-size";
+import { addToast, Button } from "@heroui/react";
+import "./Editor.css";
+import EditorToolbar from "./EditorToolBar";
+import useCourseContent from "../../hooks/useCourseContent";
 
-import {
-  FaBold,
-  FaItalic,
-  FaUnderline,
-  FaTable,
-  FaImage,
-  FaPlus,
-  FaVideo,
-  FaTextHeight,
-} from 'react-icons/fa';
-import './Editor.css';
+export default function Editor({ contentId, courseId, title, jsonContent }) {
+  const { updateTextContent, loading, error } = useCourseContent(courseId);
 
-const Toolbar = () => {
-  const { toggleBold, toggleItalic, toggleUnderline, createTable, addColumnAfter, insertImage, setFontSize, addIframe } = useCommands();
+  // State for inline title editing
+  const [editableTitle, setEditableTitle] = useState(title || "");
 
-  const insertImagePrompt = () => {
-    const url = prompt('Ingrese la URL de la imagen:');
-    if (url) {
-      insertImage({ src: url });
+  // Initialize Remirror content
+  const initialContent = (() => {
+    if (!jsonContent) {
+      return {
+        type: "doc",
+        content: [],
+      };
     }
-  };
-
-  const insertTable = () => {
-    createTable({ rowsCount: 3, colsCount: 3 });
-  };
-
-  const addColumn = () => {
-    if (addColumnAfter) {
-      addColumnAfter();
-    } else {
-      alert('El comando para agregar columna no está disponible.');
+    if (Array.isArray(jsonContent)) {
+      return {
+        type: "doc",
+        content: jsonContent,
+      };
     }
-  };
-
-  const changeFontSize = () => {
-    const size = prompt('Tamaño de fuente (ej: 20px):', '20px');
-    if (size) {
-      setFontSize({ fontSize: size });
+    if (typeof jsonContent === "string") {
+      try {
+        const parsed = JSON.parse(jsonContent);
+        if (Array.isArray(parsed)) {
+          return {
+            type: "doc",
+            content: parsed,
+          };
+        }
+        return parsed;
+      } catch (e) {
+        console.error("Error parseando jsonContent:", e);
+        return {
+          type: "doc",
+          content: [],
+        };
+      }
     }
-  };
-
-  const parseVideoUrl = (url) => {
-    let embedUrl = url;
-    const youtubeRegex = /(?:youtube\.com\/watch\?v=|youtu\.be\/)([^\s&]+)/;
-    const match = url.match(youtubeRegex);
-    if (match && match[1]) {
-      embedUrl = `https://www.youtube.com/embed/${match[1]}`;
+    if (typeof jsonContent === "object" && jsonContent.type === "doc") {
+      return jsonContent;
     }
-    return embedUrl;
-  };
+    return {
+      type: "doc",
+      content: [],
+    };
+  })();
 
-  const insertVideo = () => {
-    const url = prompt('Ingrese la URL del video (YouTube u otro):');
-    if (url) {
-      const embedUrl = parseVideoUrl(url);
-      addIframe({ src: embedUrl, width: 560, height: 315 });
-    }
-  };
-
-  return (
-    <div className="toolbar">
-      <button title="Negrita" onClick={() => toggleBold()}><FaBold /></button>
-      <button title="Cursiva" onClick={() => toggleItalic()}><FaItalic /></button>
-      <button title="Subrayado" onClick={() => toggleUnderline()}><FaUnderline /></button>
-      <button title="Insertar tabla" onClick={insertTable}><FaTable /></button>
-      <button title="Agregar columna" onClick={addColumn}><FaPlus /></button>
-      <button title="Insertar imagen" onClick={insertImagePrompt}><FaImage /></button>
-      <button title="Insertar video" onClick={insertVideo}><FaVideo /></button>
-      <button title="Cambiar tamaño del texto" onClick={changeFontSize}><FaTextHeight /></button>
-    </div>
-  );
-};
-
-export default function Editor() {
   const { manager, state } = useRemirror({
     extensions: () => [
       new BoldExtension(),
@@ -95,34 +78,89 @@ export default function Editor() {
       new UnderlineExtension(),
       new HeadingExtension(),
       new TableExtension(),
-      new ImageExtension(),
-      new PlaceholderExtension({ placeholder: 'Escribí tu contenido acá...' }),
-      new FontSizeExtension(),
+      new PlaceholderExtension({ placeholder: "Escribí tu contenido acá..." }),
+      new FontSizeExtension({ defaultSize: "16px", unit: "px" }),
       new IframeExtension({ enableResizing: true }),
+      new BulletListExtension(),
+      new ListItemExtension(),
+      new OrderedListExtension(),
+      new TaskListExtension(),
     ],
-    content: '<p>Bienvenido profe 👋</p>',
-    selection: 'end',
-    stringHandler: 'html',
+    content: initialContent,
+    selection: "end",
+    stringHandler: "prosemirror",
   });
+
+  const handleChange = useCallback(({ helpers }) => {
+    const json = helpers.getJSON();
+    console.log("Contenido JSON actual:", json);
+  }, []);
+
+  const handleSave = useCallback(async () => {
+    try {
+      const json = manager.view.state.toJSON().doc;
+      await updateTextContent(contentId,courseId, editableTitle, "", json);
+      addToast({
+        title: "Módulo Actualizado",
+        description: "El Módulo ha sido ingresado con éxito",
+        color: "success"
+      })
+    } catch (err) {
+      addToast({
+        title: "Error",
+        description: err,
+        color: "danger"
+      })
+    }
+  }, [manager, editableTitle, contentId, updateTextContent]);
+
+  const handleError = useCallback((error) => {
+    console.error("Editor error:", error);
+    return {
+      type: "doc",
+      content: [],
+    };
+  }, []);
 
   return (
     <ThemeProvider>
-      <div className="editor-wrapper">
-        <div className="editor-container">
-          <Remirror
-            manager={manager}
-            initialContent={state}
-            autoFocus
-            autoRender='end'
-            onChange={({ helpers }) => {
-              const html = helpers.getHTML();
-              console.log('Contenido actual:', html);
-            }}
-          >
-            <Toolbar />
-          </Remirror>
-        </div>
+      <div className="mb-4">
+        <input
+          type="text"
+          value={editableTitle}
+          onChange={(e) => setEditableTitle(e.target.value)}
+          placeholder="Título del contenido"
+          className="text-2xl font-semibold text-gray-800 w-full border-b border-gray-300 focus:outline-none focus:border-blue-500"
+        />
       </div>
+      <div className="border border-gray-200 rounded-md">
+        <Remirror
+          key={contentId}
+          manager={manager}
+          initialContent={state}
+          autoFocus
+          autoRender="end"
+          onChange={handleChange}
+          onError={handleError}
+        >
+          <EditorToolbar />
+        </Remirror>
+      </div>
+      <div className="mt-4 flex justify-end">
+        <Button
+          color="primary"
+          onPress={handleSave}
+          className="px-4"
+          disabled={loading}
+        >
+          {loading ? "Guardando..." : "Guardar"}
+        </Button>
+      </div>
+      {error && (
+        <div className="mt-2 text-red-600">
+          Error al guardar: {error}
+        </div>
+      )}
     </ThemeProvider>
   );
 }

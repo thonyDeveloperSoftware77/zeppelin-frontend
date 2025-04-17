@@ -8,10 +8,9 @@ import QRCode from "react-qr-code";
 import PageHeader from "../../components/ui/PageHeader";
 import Section from "../../components/ui/Section";
 
-const CourseQrTeacher = () => {
+const CourseQrTeacherPage = () => {
   const { courses } = useCourses();
   const { qr_code } = useParams(); // Obtiene el ID del curso desde la URL
- console.log(qr_code)
   const course = courses.find((course) => course.qr_code === qr_code); // Busca el curso
 
   if (!course) {
@@ -32,4 +31,4 @@ const CourseQrTeacher = () => {
   );
 };
 
-export default CourseQrTeacher;
+export default CourseQrTeacherPage;
