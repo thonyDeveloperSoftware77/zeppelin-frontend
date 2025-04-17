@@ -3,22 +3,17 @@
 @tailwind utilities;
 
 
-/* Contenedor principal del layout */
 .layout {
     display: flex;
     height: 100vh;
   }
   
-  /* Sidebar: 20% de ancho en pantallas grandes */
-  
-  /* Contenido principal */
   .layout__content {
    
     width: 100%;
     color: black;
   }
   
-  /* Responsividad: Sidebar en móviles */
   @media (max-width: 768px) {
     .sidebar {
       position: fixed;

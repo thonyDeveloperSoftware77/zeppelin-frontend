@@ -5,6 +5,7 @@ import CourseEnrollment from "../../containers/student/course/CourseEnrollment";
 import StudentAssigmentView from "../../containers/student/course/StudentAssigmentView";
 
 const CourseStudent = () => {
+  
   return (
     <div>
       <PageHeader title="Cursos" />

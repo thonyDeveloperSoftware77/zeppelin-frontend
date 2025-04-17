@@ -4,7 +4,7 @@ import Section from "../../components/ui/Section";
 import CourseAddForm from "../../containers/teacher/course/CourseAddForm";
 import CourseView from "../../containers/teacher/course/CourseView";
 
-const CourseTeacher = () => {
+const CourseTeacherPage = () => {
   return (
     <div>
       <PageHeader title="Curso" />
@@ -16,4 +16,4 @@ const CourseTeacher = () => {
   );
 };
 
-export default CourseTeacher
+export default CourseTeacherPage

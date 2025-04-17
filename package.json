@@ -14,6 +14,7 @@
     "framer-motion": "^12.4.2",
     "postcss": "^8.5.1",
     "react": "^19.0.0",
+    "react-beautiful-dnd": "^13.1.1",
     "react-dom": "^19.0.0",
     "react-hook-form": "^7.54.2",
     "react-icons": "^5.5.0",
@@ -21,6 +22,7 @@
     "react-router-dom": "^7.1.5",
     "remirror": "^3.0.1",
     "tailwindcss": "3.4.1",
+    "uuid": "^11.1.0",
     "zustand": "^5.0.3"
   },
   "browserslist": {
@@ -49,9 +51,18 @@
     "serve": "serve -s build -l 3002"
   },
   "devDependencies": {
+    "@testing-library/jest-dom": "^6.6.3",
+    "@testing-library/react": "^16.3.0",
     "@vitejs/plugin-react": "^4.3.4",
     "eslint": "^8.57.1",
+    "jsdom": "^26.1.0",
     "vite": "^6.2.1",
     "vite-plugin-eslint": "^1.8.1"
+  },
+ "jest": {
+    "moduleNameMapper": {
+      "@clerk/clerk-react": "<rootDir>/test/__mocks__/@clerk/clerk-react.js",
+      "@clerk/react-router": "<rootDir>/test/__mocks__/@clerk/clerk-react.js"
+    }
   }
 }
